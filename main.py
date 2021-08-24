@@ -1,21 +1,11 @@
 import pulp
+import networkx as nx
 
-problem = pulp.LpProblem('sample', pulp.LpMinimize)
+g = nx.Graph()
 
-a = pulp.LpVariable('a', 0, 1)
-b = pulp.LpVariable('b', 0, 1)
+edges = [(1, 2, {'weight': 0.1}),
+         (1, 3, {'weight': 0.1})]
+         
+g.add_edges_from(edges)
 
-problem += a + b
-
-problem += a >= 0
-problem += b >= 0.1
-problem += a + b == 0.5
-
-status = problem.solve()
-print ("Status", pulp.LpStatus[status])
-
-print ("problem")
-
-print ("Result")
-print ("a", a.value())
-print ("b", b.value())
+nx.draw(g)
