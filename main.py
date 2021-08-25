@@ -1,11 +1,17 @@
-import pulp
 import networkx as nx
+import matplotlib.pyplot as plt
 
-g = nx.Graph()
+G = nx.Graph()
 
-edges = [(1, 2, {'weight': 0.1}),
-         (1, 3, {'weight': 0.1})]
-         
-g.add_edges_from(edges)
+edges = [
+         ("0: src",1),
+         ("0: src",2),
+         (1,2),
+         (1,"3: dst"),
+         (2,"3: dst")
+        ]
 
-nx.draw(g)
+G.add_edges_from(edges)
+
+nx.draw(G, with_labels=True, font_size=10, node_size=2000, font_color="w")
+plt.savefig("nx_tmp.png")
