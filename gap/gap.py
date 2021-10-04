@@ -5,6 +5,9 @@ from typing import Iterable, Tuple
 import numpy as np
 import pandas as pd
 
+from ortoolpy import graph_from_table
+from more_itertools import first, pairwise
+
 if "Don't show message from pulp.":
     import pulp
 
@@ -49,6 +52,37 @@ def gap(cst, req, cap):
         int(value(lpDot(range(na), [v[i][j] for i in range(na)]))) for j in range(nj)
     ]
 
-ans = gap([[2, 2, 2], [1, 1, 1]], [[1, 1, 1], [1, 1, 1]], [2, 1])
+def Gap(
+    df,
+    capacity,
+    agent_label="agent",
+    job_label="job",
+    cost_label="cost",
+    req_label="req",
+    **kwargs,
+):
 
+    df = graph_from_table(df, None, no_graph=True, **kwargs)[1]
+    a = range(df[agent_label].max() + 1)
+    j = range(df[job_label].max() + 1)
+    c = [
+        [
+            first(df[(df[agent_label] == i) & (df[job_label] == k)][cost_label], 0)
+            for k in j
+        ]
+        for i in a
+    ]
+    r = [
+        [
+            first(df[(df[agent_label] == i) & (df[job_label] == k)][req_label], 1e6)
+            for k in j
+        ]
+        for i in a
+    ]
+    t = gap(c, r, capacity)
+    return pd.concat(
+        [df[(df[agent_label] == i) & (df[job_label] == k)] for k, i in enumerate(t)]
+    )
+
+ans = Gap('gap.csv', [2, 1, 1])
 print(ans)
