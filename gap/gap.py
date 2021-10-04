@@ -25,6 +25,15 @@ from pulp import (
     value,
 )
 
+def addvar(name=None, *, var_count=[0], lowBound=0, format="v%.6d", **kwargs):
+    """変数作成用ユーティリティ"""
+    if not name:
+        var_count[0] += 1
+        name = format % var_count[0]
+    if "lowBound" not in kwargs:
+        kwargs["lowBound"] = lowBound
+    return LpVariable(name, **kwargs)
+
 def gap(cst, req, cap):
     na, nj = len(cst), len(cst[0])
     m = LpProblem()
