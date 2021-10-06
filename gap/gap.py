@@ -44,7 +44,7 @@ def gap(cst, req, cap):
     m = LpProblem()
     ## 変数　addvarの返り値はLpVariable() cat=0-1整数問題??
     v = [[addvar(cat=LpBinary) for _ in range(nj)] for _ in range(na)]
-    ## 制約??
+    ## 制約?? コスト[]×バイナリ[] = コストの総和
     m += lpSum(lpDot(cst[i], v[i]) for i in range(na)) ## 内積: lpDot(係数のリスト, 変数のリスト)
     ## 制約　エージェントの容量チェック
     for i in range(na):
