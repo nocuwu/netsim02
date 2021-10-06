@@ -28,6 +28,7 @@ from pulp import (
     value,
 )
 
+## 変数の作成
 def addvar(name=None, *, var_count=[0], lowBound=0, format="v%.6d", **kwargs):
     """変数作成用ユーティリティ"""
     if not name:
@@ -39,19 +40,28 @@ def addvar(name=None, *, var_count=[0], lowBound=0, format="v%.6d", **kwargs):
 
 def gap(cst, req, cap):
     na, nj = len(cst), len(cst[0])
+    ## 目的関数　最小化問題
     m = LpProblem()
+    ## 変数　addvarの返り値はLpVariable() cat=0-1整数問題??
     v = [[addvar(cat=LpBinary) for _ in range(nj)] for _ in range(na)]
-    m += lpSum(lpDot(cst[i], v[i]) for i in range(na))
+    ## 制約??
+    m += lpSum(lpDot(cst[i], v[i]) for i in range(na)) ## 内積: lpDot(係数のリスト, 変数のリスト)
+    ## 制約　エージェントの容量チェック
     for i in range(na):
         m += lpDot(req[i], v[i]) <= cap[i]
+    ## 制約　xij=1
     for j in range(nj):
         m += lpSum(v[i][j] for i in range(na)) == 1
+    
+    ## 解けなかったらnone
     if m.solve() != 1:
         return None
+    ## それ以外（解けたら）return
     return [
         int(value(lpDot(range(na), [v[i][j] for i in range(na)]))) for j in range(nj)
     ]
 
+## csvファイルを読んでgap()に投げる
 def Gap(
     df,
     capacity,
