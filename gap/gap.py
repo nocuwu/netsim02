@@ -52,6 +52,9 @@ def gap(cst, req, cap):
     ## 制約　xij=1
     for j in range(nj):
         m += lpSum(v[i][j] for i in range(na)) == 1
+    ## 制約　フロー保存則
+    for j in range(nj):
+        m += (lpSum(v[i][j] for i in range(na)) - lpSum(v[j][i] for i in range(na))) == 0
     
     ## 解けなかったらnone
     if m.solve() != 1:
