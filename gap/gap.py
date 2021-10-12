@@ -36,9 +36,12 @@ def addvar(name=None, *, var_count=[0], lowBound=0, format="v%.6d", **kwargs):
         name = format % var_count[0]
     if "lowBound" not in kwargs:
         kwargs["lowBound"] = lowBound
+    
+    ## print(LpVariable(name, **kwargs))
     return LpVariable(name, **kwargs)
 
 def gap(cst, req, cap):
+    ## na: エージェント数 nj: ジョブ数
     na, nj = len(cst), len(cst[0])
     ## 目的関数　最小化問題
     m = LpProblem()
@@ -52,13 +55,25 @@ def gap(cst, req, cap):
     ## 制約　xij=1
     for j in range(nj):
         m += lpSum(v[i][j] for i in range(na)) == 1
+
+    '''
     ## 制約　フロー保存則
     for j in range(nj):
-        m += (lpSum(v[i][j] for i in range(na)) - lpSum(v[j][i] for i in range(na))) == 0
-    
+        m += (lpSum(v[i][j] for i in range(na)) - lpSum(v[j][i] for i in range(na))) != -549
+    '''
+    # print(na)
+    # print(nj)
+    # print(len(cst[0]))
+
     ## 解けなかったらnone
     if m.solve() != 1:
         return None
+    '''
+    for i in range(na):
+        for j in range(nj):
+            print(value(v[i][j]))
+    '''
+
     ## それ以外（解けたら）return
     return [
         int(value(lpDot(range(na), [v[i][j] for i in range(na)]))) for j in range(nj)
@@ -97,5 +112,5 @@ def Gap(
         [df[(df[agent_label] == i) & (df[job_label] == k)] for k, i in enumerate(t)]
     )
 
-ans = Gap('gap.csv', [2, 1, 1])
+ans = Gap('gap.csv', [2, 1])
 print(ans)
