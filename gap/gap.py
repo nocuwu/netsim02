@@ -56,11 +56,23 @@ def gap(cst, req, cap):
     for j in range(nj):
         m += lpSum(v[i][j] for i in range(na)) == 1
 
+    ##フロー保存則
     '''
-    ## 制約　フロー保存則
     for j in range(nj):
         m += (lpSum(v[i][j] for i in range(na)) - lpSum(v[j][i] for i in range(na))) != -549
     '''
+    # 辺
+    es = ['ab', 'ac', 'bc', 'bd', 'cd']
+    # 容量
+    ws = [5, 2, 6, 4, 2]
+    # 変数
+    vs = {e: pulp.LpVariable('x{}'.format(e), lowBound = 0, upBound = w) for e, w in zip(es, ws)}
+    # 目的関数
+    #prob += vs['ab'] + vs['ac']
+    # 制約条件
+    m += vs['ab'] == vs['bc'] + vs['bd']
+    m += vs['ac'] + vs['bc'] == vs['cd']
+
     # print(na)
     # print(nj)
     # print(len(cst[0]))
