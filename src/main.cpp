@@ -11,6 +11,16 @@ using namespace std;
 
 typedef long long ll;
 typedef vector<int> vi;
+// サーバ1つ当たりのCPUコア（）
+#define cpu_core 10
+#define memory 100
+// スループット（サーバ間）
+#define tp 100
+
+struct vnf(){
+    int req_cpu = 2;
+    int req_memory = 10;
+}
 
 int main(){
 	
