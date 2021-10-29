@@ -4,6 +4,7 @@
 #include <string>
 #include <cmath>
 #include <iomanip> //fixed << setprecision(10)
+#include <functional>
 
 using namespace std;
 
@@ -21,9 +22,6 @@ typedef vector<int> vi;
 // スループット（サーバ間）[bps]
 #define tp_server_server 100000000
 
-int a = 1;
-int b = 1;
-
 struct sc
 {
   int req_bw;
@@ -31,20 +29,31 @@ struct sc
   int req_ram_sc;
 };
 
-struct vnf
-{
-  int req_cpu;
-  int req_ram;
-};
-
 int main()
 {
+  //vnfの種類数
+  int num_of_vnf = 4;
+  //vnf[0].first: vnf0の要求cpuコア数
+  //vnf[0].second: vnf0の要求メモリ[GB]
+  vector<pair<int, int>> vnf(num_of_vnf);
+  vnf[0] = make_pair(2, 2);
+  vnf[1] = make_pair(2, 2);
+  vnf[2] = make_pair(2, 2);
+  vnf[3] = make_pair(2, 2);
+  vnf[4] = make_pair(2, 2);
+
   //データサイズが変化するsc
-  sc variable;
-  variable.req_bw = 100000000;
+  sc sc0;
+  sc0.req_bw = 100000000;
+  sc0.req_cpu_sc = vnf[0].first + vnf[1].first + vnf[2].first + vnf[3].first;
+  sc0.req_ram_sc = vnf[0].second + vnf[1].second + vnf[2].second + vnf[3].second;
   //データサイズが変化しないsc
-  sc no_compression;
-  no_compression.req_bw = 100000000;　
+  sc sc1;
+  sc1.req_bw = 100000000;
+  sc1.req_cpu_sc = vnf[0].first + vnf[1].first + vnf[2].first + vnf[4].first;
+  sc1.req_ram_sc = vnf[0].second + vnf[1].second + vnf[2].second + vnf[4].second;
+
+  cout << sc1.req_cpu_sc << endl;
 
   return 0;
 }
