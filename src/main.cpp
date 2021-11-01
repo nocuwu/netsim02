@@ -1,3 +1,4 @@
+   
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -82,15 +83,18 @@ int main()
   //cout << sc1.req_cpu_sc << endl;
 
   //サーバ4つのトポロジー
-  topology four;
-  four.t_cpu = CPU_CORE * 4;
-  four.t_ram = RAM * 4;
+  topology topology;
+  topology.t_cpu = CPU_CORE * 4;
+  topology.t_ram = RAM * 4;
   while (1)
   {
     //sc0が発生した
-    int req_sc = 0;
+    int req_sc;
+    req_sc = 0;
     int req_cpu_sc;
     int req_ram_sc;
+
+    //割り当て関数内の変数にコピー
     if (req_sc == 0)
     {
       vector<bool> req_sf = sc0.req_sf;
@@ -107,24 +111,18 @@ int main()
     
 
     //トポロジの残余リソースが発生したscの要求リソースに満たない場合棄却
-    if (four.t_cpu <= req_cpu_sc || four.t_ram < req_ram_sc)
+    if (topology.t_cpu <= req_cpu_sc || topology.t_ram <= req_ram_sc)
     {
+      cout << "break: " << topology.t_cpu << " " << req_cpu_sc << " " << topology.t_ram << " " << req_ram_sc << endl;
       break;
     }
     else
     {
-      cout << four.t_cpu << " " << four.t_ram << endl;
-      four.t_cpu -= 10;
-      four.t_cpu -= 10;
+      cout << topology.t_cpu << " " << req_cpu_sc << " " << topology.t_ram << " " << req_ram_sc << endl;
+      topology.t_cpu -= 10;
+      topology.t_ram -= 10;
     }
   }
 
   return 0;
-}
-
-int gcd(int a, int b)
-{
-  if (b == 0)
-    return a;
-  return gcd(b, a % b);
 }
