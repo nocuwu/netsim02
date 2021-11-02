@@ -1,4 +1,3 @@
-   
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -18,10 +17,10 @@ typedef vector<int> vi;
 #define CPU_CORE 12
 // サーバ1つ当たりのメモリ(RAM)[GB]
 #define RAM 24
-// スループット（source-サーバ間/サーバ-terminal間）[bps]
-#define tp_io_server 1'000'000'000
 // スループット（サーバ間）[bps]
-#define tp_server_server 100'000'000
+#define tp_io_server 1'000'000'000
+// サーバ台数
+#define NUM_SERVER 4
 
 //トポロジの残余リソース
 struct topology
@@ -84,8 +83,31 @@ int main()
 
   //サーバ4つのトポロジー
   topology topology;
-  topology.t_cpu = CPU_CORE * 4;
-  topology.t_ram = RAM * 4;
+  topology.t_cpu = CPU_CORE * NUM_SERVER;
+  topology.t_ram = RAM * NUM_SERVER;
+
+  //各サーバ容量
+  vector<tuple<int, int, int>> server(NUM_SERVER);
+  
+  server[0] = make_tuple(CPU_CORE, RAM, 0);
+  server[1] = make_tuple(CPU_CORE, RAM, 0);
+  server[2] = make_tuple(CPU_CORE, RAM, 0);
+  server[4] = make_tuple(CPU_CORE, RAM, 0);
+
+  //各サーバ割当状況
+  vector<pair<int, int>> req_server(NUM_SERVER);
+  req_server[0] = make_pair(0, 0);
+  req_server[1] = make_pair(0, 0);
+  req_server[2] = make_pair(0, 0);
+  req_server[3] = make_pair(0, 0);
+
+  //これダメなの？？
+  /*
+  for(int i = 0; i < NUM_SERVER; i++){
+    server[i] = make_tuple((CPU_CORE, RAM, 0);
+  }
+  */
+
   while (1)
   {
     //sc0が発生した
@@ -108,8 +130,7 @@ int main()
       req_ram_sc = sc1.req_ram_sc;
     }
 
-    
-
+    /*
     //トポロジの残余リソースが発生したscの要求リソースに満たない場合棄却
     if (topology.t_cpu <= req_cpu_sc || topology.t_ram <= req_ram_sc)
     {
@@ -121,6 +142,38 @@ int main()
       cout << topology.t_cpu << " " << req_cpu_sc << " " << topology.t_ram << " " << req_ram_sc << endl;
       topology.t_cpu -= 10;
       topology.t_ram -= 10;
+    }
+    */
+
+    // sf配置を全通り試す
+    for (int m = 0; m < 25; m++)
+    {
+      // 1つめのsf配置
+      for (int fst = 0; fst < NUM_SERVER; fst++)
+      {
+        // 2つめのsf配置
+        for (int scd = 0; scd < NUM_SERVER; scd++)
+        {
+          // 3つめのsf配置
+          for (int trd = 0; trd < NUM_SERVER; trd++)
+          {
+            // 4つめのsf配置
+            for (int fth = 0; fth < NUM_SERVER; fth++)
+            {
+              //CPUコア
+              req_server[fst].first += 4;
+              req_server[scd].first += 4;
+              req_server[trd].first += 4;
+              req_server[fth].first += 4;
+              //メモリ
+              req_server[fst].second += 4;
+              req_server[scd].second += 4;
+              req_server[trd].second += 4;
+              req_server[fth].second += 4;
+            }
+          }
+        }
+      }
     }
   }
 
