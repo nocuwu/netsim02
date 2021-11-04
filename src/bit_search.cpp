@@ -11,34 +11,26 @@ using namespace std;
 
 int main()
 {
-    int N, W;
-    //cin >> N >> W;
-    N = 5;
-    W = 10;
-    vector<int> A(N);
-    /*
-    for (int i = 0; i < N; ++i) {
-        cin >> A[i];
+    int n = 5;
+    int W = 10;
+    vector<int> a(n);
+
+    for(int i = 0; i < n; i++){
+        a[i] = 1;
     }
-    */
-    A[0] = 1;
-    A[1] = 2;
-    A[2] = 3;
-    A[3] = 6;
-    A[4] = 8;
 
     int ans = 0;
 
-    for (int bit = 0; bit < (1 << N); ++bit)
+    for (int bit = 0; bit < (1 << n); ++bit)
     {
         int S = 0;
-        for (int i = 0; i < N; ++i)
+        for (int i = 0; i < n; ++i)
         {
             //整数bitを2進法表記したときの、下からi桁目が1か判定
             if (bit & (1 << i))
             {
-                cout << A[i];
-                S += A[i];
+                cout << a[i];
+                //S += a[i];
             }
         }
         if (S == W)
