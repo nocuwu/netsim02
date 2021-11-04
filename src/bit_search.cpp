@@ -29,8 +29,11 @@ int main()
             //整数bitを2進法表記したときの、下からi桁目が1か判定
             if (bit & (1 << i))
             {
-                cout << a[i];
+                cout << 1;
                 //S += a[i];
+            }
+            else{
+                cout << 0;
             }
         }
         if (S == W)
