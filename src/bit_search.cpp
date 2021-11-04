@@ -37,14 +37,17 @@ int main()
             //整数bitを2進法表記したときの、下からi桁目が1か判定
             if (bit & (1 << i))
             {
+                cout << A[i];
                 S += A[i];
             }
         }
         if (S == W)
         {
             ans++;
+            cout << "(hit)";
         }
+        cout << ":"<< bit << endl;
     }
 
-    cout << ans << endl;
+    cout  << ans << endl;
 }
