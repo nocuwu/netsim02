@@ -45,7 +45,7 @@ struct sc
 
 int bin2dec(int bin_1, int bin_0)
 {
-  return (bin_1 * bin_1) + bin_0;
+  return (bin_1 * 2) + bin_0;
 }
 
 int main()
