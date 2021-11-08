@@ -34,7 +34,7 @@ struct topology
 //サービス（ファンクション）チェイン
 struct sc
 {
-  vector<bool> req_sf;
+  vector<int> req_sf;
   //sc要求帯域
   int req_bw;
   //sc要求cpuコア数
@@ -45,7 +45,7 @@ struct sc
 
 int bin2dec(int bin_1, int bin_0)
 {
-    return (bin_1 * bin_1) + bin_0;
+  return (bin_1 * bin_1) + bin_0;
 }
 
 int main()
@@ -66,22 +66,38 @@ int main()
   //データサイズが変化するsc
   sc sc0;
   //要求sf数を4、全て未割当(false)に設定
-  sc0.req_sf.resize(4);
+  sc0.req_sf.resize(3);
+  /*
   for (int i = 0; i < sc0.req_sf.size(); i++)
   {
     sc0.req_sf[i] = false;
   }
+  */
+  //sc0の0番目のsfは0
+  sc0.req_sf[0] = 0;
+  //sc0の1番目のsfは0
+  sc0.req_sf[1] = 0;
+  sc0.req_sf[2] = 0;
+
   sc0.req_bw = 100'000'000;
   sc0.req_cpu_sc = sf[0].first + sf[1].first + sf[2].first + sf[3].first;
   sc0.req_ram_sc = sf[0].second + sf[1].second + sf[2].second + sf[3].second;
 
   //データサイズが変化しないsc
   sc sc1;
-  sc0.req_sf.resize(4);
+  sc1.req_sf.resize(3);
+  /*
   for (int i = 0; i < sc0.req_sf.size(); i++)
   {
     sc0.req_sf[i] = false;
   }
+  */
+  //sc1の0番目のsfは0
+  sc1.req_sf[0] = 0;
+  //sc1の1番目のsfは0
+  sc1.req_sf[1] = 0;
+  sc1.req_sf[2] = 0;
+
   sc1.req_bw = 100'000'000;
   sc1.req_cpu_sc = sf[0].first + sf[1].first + sf[2].first + sf[4].first;
   sc1.req_ram_sc = sf[0].second + sf[1].second + sf[2].second + sf[4].second;
@@ -101,13 +117,6 @@ int main()
   server[2] = make_tuple(CPU_CORE, RAM, 0);
   server[3] = make_tuple(CPU_CORE, RAM, 0);
 
-  //各サーバ割当状況
-  vector<pair<int, int>> req_server(NUM_SERVER);
-  req_server[0] = make_pair(0, 0);
-  req_server[1] = make_pair(0, 0);
-  req_server[2] = make_pair(0, 0);
-  req_server[3] = make_pair(0, 0);
-
   //****************************************************************************************
 
   int n = 12;
@@ -121,15 +130,52 @@ int main()
 
   int ans = 0;
 
-  //組み合わせ数ループ
+  //sc発生
+  int num_of_sc = 4;
+  vector<int> req_sc(num_of_sc);
+  req_sc[0] = 0;
+  req_sc[1] = 0;
+  req_sc[2] = 0;
+  req_sc[3] = 0;
+
+  //***************組み合わせループ
   for (int bit = 0; bit < (1 << n); ++bit)
   {
     int S = 0;
+
+    //各サーバ割当状況
+    vector<pair<int, int>> req_server(NUM_SERVER);
+    req_server[0] = make_pair(0, 0);
+    req_server[1] = make_pair(0, 0);
+    req_server[2] = make_pair(0, 0);
+    req_server[3] = make_pair(0, 0);
+
+    //***********************scループ
     for (int sc = 0; sc < n; sc = sc + 6)
     {
-      vector<int> deploy_sf(3);
+      vector<int> deploy_sf(num_of_vnf);
+      vector<int> req_sf(num_of_vnf);
+
+      //要求scが0だったら
+      if (req_sc[sc / 6] == 0)
+      {
+        //sc0の要求sf番号の配列をコピー
+        for (int j = 0; j < num_of_vnf; j++)
+        {
+          req_sf[j] = sc0.req_sf[j];
+        }
+      }
+      else if (req_sc[sc / 6] == 1)
+      {
+        for (int j = 0; j < num_of_vnf; j++)
+        {
+          req_sf[j] = sc1.req_sf[j];
+        }
+      }
+      //*************************sfループ
       for (int i = sc * 6; i < (sc * 6) + 6; i = i + 2)
       {
+
         int bin_0, bin_1;
         int dec;
         //整数bitを2進法表記したときの、下からi桁目が1か判定
@@ -161,8 +207,14 @@ int main()
         }
 
         //iビット目の
-        int index_deploy_sf = (i % 6) /2;
+        int index_deploy_sf = (i % 6) / 2;
+        //sfが割り当てられたサーバ番号
         deploy_sf[index_deploy_sf] = dec;
+        //サーバ[sfが割り当てられたサーバ番号]の必要CPUコア数
+        req_server[deploy_sf[index_deploy_sf]].first += sf[req_sf[index_deploy_sf]].first;
+        //サーバ[sfが割り当てられたサーバ番号]の必要メモリ数[GB]
+        req_server[deploy_sf[index_deploy_sf]].second += sf[req_sf[index_deploy_sf]].second;
+
         cout << deploy_sf[index_deploy_sf];
       }
       cout << " ";
@@ -171,6 +223,10 @@ int main()
     {
       ans++;
       cout << "(hit)";
+    }
+
+    for(int j = 0; j < NUM_SERVER; j++){
+      cout << req_server[j].first << " ";
     }
     cout << ":" << bit << endl;
   }
