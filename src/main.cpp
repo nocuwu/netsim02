@@ -1,3 +1,5 @@
+#include <wchar.h>
+#include <bits/stdc++.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -40,6 +42,11 @@ struct sc
   //sc要求メモリ[GB]
   int req_ram_sc;
 };
+
+int bin2dec(int bin_1, int bin_0)
+{
+    return (bin_1 * bin_1) + bin_0;
+}
 
 int main()
 {
@@ -88,11 +95,11 @@ int main()
 
   //各サーバ容量
   vector<tuple<int, int, int>> server(NUM_SERVER);
-  
+
   server[0] = make_tuple(CPU_CORE, RAM, 0);
   server[1] = make_tuple(CPU_CORE, RAM, 0);
   server[2] = make_tuple(CPU_CORE, RAM, 0);
-  server[4] = make_tuple(CPU_CORE, RAM, 0);
+  server[3] = make_tuple(CPU_CORE, RAM, 0);
 
   //各サーバ割当状況
   vector<pair<int, int>> req_server(NUM_SERVER);
@@ -101,6 +108,72 @@ int main()
   req_server[2] = make_pair(0, 0);
   req_server[3] = make_pair(0, 0);
 
+  //****************************************************************************************
+
+  int n = 12;
+  int W = 10;
+  vector<int> a(n);
+
+  for (int i = 0; i < n; i++)
+  {
+    a[i] = 1;
+  }
+
+  int ans = 0;
+
+  //組み合わせ数ループ
+  for (int bit = 0; bit < (1 << n); ++bit)
+  {
+    int S = 0;
+    for (int sc = 0; sc < n; sc = sc + 6)
+    {
+      vector<int> deploy_sf(3);
+      for (int i = sc * 6; i < (sc * 6) + 6; i = i + 2)
+      {
+        int bin_0, bin_1;
+        int dec;
+        //整数bitを2進法表記したときの、下からi桁目が1か判定
+        //cout << (bit & (1 << i));
+        if (bit & (1 << i))
+        {
+          if (bit & (1 << i + 1))
+          {
+            dec = bin2dec(1, 1);
+          }
+          else
+          {
+            dec = bin2dec(0, 1);
+          }
+          //cout << 1;
+          //S += a[i];
+        }
+        else
+        {
+          if (bit & (1 << i + 1))
+          {
+            dec = bin2dec(1, 0);
+          }
+          else
+          {
+            dec = bin2dec(0, 0);
+          }
+          //cout << 0;
+        }
+
+        //iビット目の
+        int index_deploy_sf = (i % 6) /2;
+        deploy_sf[index_deploy_sf] = dec;
+        cout << deploy_sf[index_deploy_sf];
+      }
+      cout << " ";
+    }
+    if (S == W)
+    {
+      ans++;
+      cout << "(hit)";
+    }
+    cout << ":" << bit << endl;
+  }
   //これダメなの？？
   /*
   for(int i = 0; i < NUM_SERVER; i++){
@@ -108,6 +181,7 @@ int main()
   }
   */
 
+  /*
   while (1)
   {
     //sc0が発生した
@@ -130,7 +204,7 @@ int main()
       req_ram_sc = sc1.req_ram_sc;
     }
 
-    /*
+    
     //トポロジの残余リソースが発生したscの要求リソースに満たない場合棄却
     if (topology.t_cpu <= req_cpu_sc || topology.t_ram <= req_ram_sc)
     {
@@ -143,7 +217,7 @@ int main()
       topology.t_cpu -= 10;
       topology.t_ram -= 10;
     }
-    */
+    
 
     // sf配置を全通り試す
     for (int m = 0; m < 25; m++)
@@ -176,6 +250,6 @@ int main()
       }
     }
   }
-
+  */
   return 0;
 }
