@@ -24,6 +24,9 @@ typedef vector<int> vi;
 // サーバ台数
 #define NUM_SERVER 4
 
+#define IN 4
+#define OUT 5
+
 //トポロジの残余リソース
 struct topology
 {
@@ -52,10 +55,10 @@ int main()
 {
   //------service function の設定
   //vnfの種類数
-  int num_of_vnf = 4;
+  int num_of_sf = 5;
   //vnf[0].first: vnf0の要求cpuコア数
   //vnf[0].second: vnf0の要求メモリ[GB]
-  vector<pair<int, int>> sf(num_of_vnf);
+  vector<pair<int, int>> sf(num_of_sf);
   sf[0] = make_pair(2, 2);
   sf[1] = make_pair(2, 2);
   sf[2] = make_pair(2, 2);
@@ -141,33 +144,41 @@ int main()
   //***************組み合わせループ
   for (int bit = 0; bit < (1 << n); ++bit)
   {
+    cout << bit << " ";
     int S = 0;
 
-    //各サーバ割当状況
+    //各サーバ要求
     vector<pair<int, int>> req_server(NUM_SERVER);
     req_server[0] = make_pair(0, 0);
     req_server[1] = make_pair(0, 0);
     req_server[2] = make_pair(0, 0);
     req_server[3] = make_pair(0, 0);
 
+    //各リンク要求
+    int num_of_node = 6;
+    vector<vector<int>> req_link;
+    req_link.assign(num_of_node, vector<int>(num_of_node, 0));
+
     //***********************scループ
     for (int sc = 0; sc < n; sc = sc + 6)
     {
-      vector<int> deploy_sf(num_of_vnf);
-      vector<int> req_sf(num_of_vnf);
+      //sfの配置先
+      vector<int> deploy_sf(num_of_sf);
+      //今見てるscの要求sfリスト
+      vector<int> req_sf(num_of_sf);
 
       //要求scが0だったら
       if (req_sc[sc / 6] == 0)
       {
         //sc0の要求sf番号の配列をコピー
-        for (int j = 0; j < num_of_vnf; j++)
+        for (int j = 0; j < num_of_sf; j++)
         {
           req_sf[j] = sc0.req_sf[j];
         }
       }
       else if (req_sc[sc / 6] == 1)
       {
-        for (int j = 0; j < num_of_vnf; j++)
+        for (int j = 0; j < num_of_sf; j++)
         {
           req_sf[j] = sc1.req_sf[j];
         }
@@ -206,14 +217,22 @@ int main()
           //cout << 0;
         }
 
-        //iビット目の
+        //今見てるsc内で何番目のsfか
         int index_deploy_sf = (i % 6) / 2;
-        //sfが割り当てられたサーバ番号
+        //そのsfが割り当てられたサーバ番号
         deploy_sf[index_deploy_sf] = dec;
-        //サーバ[sfが割り当てられたサーバ番号]の必要CPUコア数
+        //あるサーバに要求されるCPUコア数の総和
         req_server[deploy_sf[index_deploy_sf]].first += sf[req_sf[index_deploy_sf]].first;
-        //サーバ[sfが割り当てられたサーバ番号]の必要メモリ数[GB]
+        //あるサーバに要求されるCPUコア数の総和
         req_server[deploy_sf[index_deploy_sf]].second += sf[req_sf[index_deploy_sf]].second;
+
+        if (index_deploy_sf == 2)
+        {
+          req_link[IN][deploy_sf[index_deploy_sf - 2]] += 100;
+          req_link[deploy_sf[index_deploy_sf - 2]][deploy_sf[index_deploy_sf - 1]] += 100;
+          req_link[deploy_sf[index_deploy_sf - 1]][deploy_sf[index_deploy_sf]] += 100;
+          req_link[deploy_sf[index_deploy_sf]][OUT] += 100;
+        }
 
         cout << deploy_sf[index_deploy_sf];
       }
@@ -225,10 +244,31 @@ int main()
       cout << "(hit)";
     }
 
-    for(int j = 0; j < NUM_SERVER; j++){
+    for (int j = 0; j < NUM_SERVER; j++)
+    {
       cout << req_server[j].first << " ";
     }
-    cout << ":" << bit << endl;
+    for (int j = 0; j < NUM_SERVER; j++)
+    {
+      cout << req_server[j].second << " ";
+    }
+
+    cout << req_link[IN][0] << " ";
+    cout << req_link[IN][1] << " ";
+    cout << req_link[IN][2] << " ";
+    cout << req_link[IN][3] << " ";
+    cout << req_link[0][1] << " ";
+    cout << req_link[0][2] << " ";
+    cout << req_link[0][3] << " ";
+    cout << req_link[1][2] << " ";
+    cout << req_link[1][3] << " ";
+    cout << req_link[2][3] << " ";
+    cout << req_link[0][OUT] << " ";
+    cout << req_link[1][OUT] << " ";
+    cout << req_link[2][OUT] << " ";
+    cout << req_link[3][OUT] << " ";
+
+    cout << endl;
   }
   //これダメなの？？
   /*
