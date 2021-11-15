@@ -46,9 +46,51 @@ struct sc
   int req_ram_sc;
 };
 
+//2進数をint型10進数に変換して返す
 int bin2dec(int bin_1, int bin_0)
 {
   return (bin_1 * 2) + bin_0;
+}
+
+//処理時間を計算
+int processing(int sf, int size_data)
+{
+  if (sf == 0)
+  {
+    return camera(size_data);
+  }
+  else if (sf == 1)
+  {
+    return ffmpeg(size_data);
+  }
+  else if (sf == 2)
+  {
+    return yolo_v2(size_data);
+  }
+  else if (sf == 3)
+  {
+    return mpeg_dash(size_data);
+  }
+}
+
+int camera(int size_data)
+{
+  return 0;
+}
+
+int ffmpeg(int size_data)
+{
+  return 0;
+}
+
+int yolo_v2(int size_data)
+{
+  return 0;
+}
+
+int mpeg_dash(int size_data)
+{
+  return 0;
 }
 
 int main()
@@ -285,7 +327,6 @@ int main()
     req_sc = 0;
     int req_cpu_sc;
     int req_ram_sc;
-
     //割り当て関数内の変数にコピー
     if (req_sc == 0)
     {
@@ -299,7 +340,6 @@ int main()
       req_cpu_sc = sc1.req_cpu_sc;
       req_ram_sc = sc1.req_ram_sc;
     }
-
     
     //トポロジの残余リソースが発生したscの要求リソースに満たない場合棄却
     if (topology.t_cpu <= req_cpu_sc || topology.t_ram <= req_ram_sc)
@@ -314,7 +354,6 @@ int main()
       topology.t_ram -= 10;
     }
     
-
     // sf配置を全通り試す
     for (int m = 0; m < 25; m++)
     {
