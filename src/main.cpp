@@ -57,38 +57,106 @@ int processing(int sf, int size_data)
 {
   if (sf == 0)
   {
-    return camera(size_data);
+    return camera();
   }
   else if (sf == 1)
   {
-    return ffmpeg(size_data);
+    return ffmpeg_pic(size_data);
   }
   else if (sf == 2)
   {
-    return yolo_v2(size_data);
+    return ffmpeg_encode(size_data);
   }
   else if (sf == 3)
   {
-    return mpeg_dash(size_data);
+    return ffmpeg_cut(size_data);
+  }
+  else if (sf == 4)
+  {
+    return ffmpeg_reso(size_data);
+  }
+  else if (sf == 5)
+  {
+    return ffmpeg_fps(size_data);
+  }
+  else if (sf == 6)
+  {
+    return mosiac(size_data);
+  }
+  else if (sf == 7)
+  {
+    return detect(size_data);
+  }
+  else if (sf == 8)
+  {
+    return yolo(size_data);
+  }
+  else if (sf == 9)
+  {
+    return dash(size_data);
   }
 }
 
-int camera(int size_data)
+//映像取得
+int camera()
 {
   return 0;
 }
 
-int ffmpeg(int size_data)
+//FFmpeg（画像変換）
+int ffmpeg_pic(int size_data)
 {
   return 0;
 }
 
-int yolo_v2(int size_data)
+//FFmpeg（エンコード）
+int ffmpeg_encode(int size_data)
 {
   return 0;
 }
 
-int mpeg_dash(int size_data)
+//FFmpeg（指定範囲切り出し）
+int ffmpeg_cut(int size_data)
+{
+  return 0;
+}
+
+//FFmpeg（解像度変更）
+int ffmpeg_reso(int size_data)
+{
+  return 0;
+}
+
+//FFmpeg（FPS変更）
+int ffmpeg_fps(int size_data)
+{
+  return 0;
+}
+
+//イメージモザイキング
+int mosiac(int size_data)
+{
+  int time;
+  time = size_data % 2;
+  return time;
+}
+
+//赤外線画像人物検出
+int detect(int size_data)
+{
+  int time;
+  time = size_data;
+  return time;
+}
+
+//YOLO v2
+int yolo(int size_data)
+{
+  return 0;
+}
+
+//MPEG-DASH
+int dash(int size_data)
 {
   return 0;
 }
