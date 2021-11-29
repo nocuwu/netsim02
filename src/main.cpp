@@ -53,71 +53,71 @@ int bin2dec(int bin_1, int bin_0)
 }
 
 //映像取得
-int camera()
+double camera()
 {
   return 0;
 }
 
 //FFmpeg（画像変換）
-int ffmpeg_pic(int size_data)
+double ffmpeg_pic(double size_data)
 {
   return 0;
 }
 
 //FFmpeg（エンコード）
-int ffmpeg_encode(int size_data)
+double ffmpeg_encode(double size_data)
 {
   return 0;
 }
 
 //FFmpeg（指定範囲切り出し）
-int ffmpeg_cut(int size_data)
+double ffmpeg_cut(double size_data)
 {
   return 0;
 }
 
 //FFmpeg（解像度変更）
-int ffmpeg_reso(int size_data)
+double ffmpeg_reso(double size_data)
 {
   return 0;
 }
 
 //FFmpeg（FPS変更）
-int ffmpeg_fps(int size_data)
+double ffmpeg_fps(double size_data)
 {
   return 0;
 }
 
 //イメージモザイキング
-int mosiac(int size_data)
+double mosiac(double size_data)
 {
-  int time;
-  time = size_data / 2;
+  double time;
+  time = size_data / 1.8;
   return time;
 }
 
 //赤外線画像人物検出
-int detect(int size_data)
+double detect(double size_data)
 {
-  int time;
-  time = size_data;
+  double time;
+  time = size_data / 0.92;
   return time;
 }
 
 //YOLO v2
-int yolo(int size_data)
+int yolo(double size_data)
 {
   return 0;
 }
 
 //MPEG-DASH
-int dash(int size_data)
+int dash(double size_data)
 {
   return 0;
 }
 
 //処理時間を計算
-int processing(int sf, int size_data)
+double processing(int sf, double size_data)
 {
   if (sf == 0)
   {
@@ -243,7 +243,7 @@ int main()
 
   //****************************************************************************************
   //n = sc数*6
-  int n = 12;
+  int n = 18;
   int W = 10;
   vector<int> a(n);
 
@@ -271,7 +271,7 @@ int main()
   best_pattern_accepted[2] = make_pair(-1, -1);
   best_pattern_accepted[3] = make_pair(-1, -1);
 
-  int best_bottleneck_server_time_passed = 9999;
+  double best_bottleneck_server_time_passed = 9999;
 
   //***************組み合わせループ
   for (int bit = 0; bit < (1 << n); ++bit)
@@ -287,7 +287,7 @@ int main()
     req_server[3] = make_pair(0, 0);
 
     //サーバの処理時間
-    vector<int> server_time_passed(4);
+    vector<double> server_time_passed(4);
     for (int i = 0; i < 4; i++)
     {
       server_time_passed[i] = 0;
@@ -375,7 +375,7 @@ int main()
         }
 
         //算出された処理時間を割当先のサーバに足していく
-        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 5);
+        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 5.0);
 
         cout << deploy_sf[index_deploy_sf];
       }
@@ -411,7 +411,7 @@ int main()
     cout << req_link[2][OUT] << " ";
     cout << req_link[3][OUT] << " ";
 
-    int bottleneck_server_time_passed = -1;
+    double bottleneck_server_time_passed = -1.0;
     for (int k = 0; k < 4; k++)
     {
       bottleneck_server_time_passed = max(bottleneck_server_time_passed, server_time_passed[k]);
