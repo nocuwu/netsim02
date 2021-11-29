@@ -52,51 +52,6 @@ int bin2dec(int bin_1, int bin_0)
   return (bin_1 * 2) + bin_0;
 }
 
-//処理時間を計算
-int processing(int sf, int size_data)
-{
-  if (sf == 0)
-  {
-    return camera();
-  }
-  else if (sf == 1)
-  {
-    return ffmpeg_pic(size_data);
-  }
-  else if (sf == 2)
-  {
-    return ffmpeg_encode(size_data);
-  }
-  else if (sf == 3)
-  {
-    return ffmpeg_cut(size_data);
-  }
-  else if (sf == 4)
-  {
-    return ffmpeg_reso(size_data);
-  }
-  else if (sf == 5)
-  {
-    return ffmpeg_fps(size_data);
-  }
-  else if (sf == 6)
-  {
-    return mosiac(size_data);
-  }
-  else if (sf == 7)
-  {
-    return detect(size_data);
-  }
-  else if (sf == 8)
-  {
-    return yolo(size_data);
-  }
-  else if (sf == 9)
-  {
-    return dash(size_data);
-  }
-}
-
 //映像取得
 int camera()
 {
@@ -158,6 +113,53 @@ int yolo(int size_data)
 //MPEG-DASH
 int dash(int size_data)
 {
+  return 0;
+}
+
+//処理時間を計算
+int processing(int sf, int size_data)
+{
+  if (sf == 0)
+  {
+    return camera();
+  }
+  else if (sf == 1)
+  {
+    return ffmpeg_pic(size_data);
+  }
+  else if (sf == 2)
+  {
+    return ffmpeg_encode(size_data);
+  }
+  else if (sf == 3)
+  {
+    return ffmpeg_cut(size_data);
+  }
+  else if (sf == 4)
+  {
+    return ffmpeg_reso(size_data);
+  }
+  else if (sf == 5)
+  {
+    return ffmpeg_fps(size_data);
+  }
+  else if (sf == 6)
+  {
+    return mosiac(size_data);
+  }
+  else if (sf == 7)
+  {
+    return detect(size_data);
+  }
+  else if (sf == 8)
+  {
+    return yolo(size_data);
+  }
+  else if (sf == 9)
+  {
+    return dash(size_data);
+  }
+
   return 0;
 }
 
