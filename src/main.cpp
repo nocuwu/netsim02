@@ -172,8 +172,11 @@ int main()
   //sf[0].first: vnf0の要求cpuコア数
   //sf[0].second: vnf0の要求メモリ[GB]
   vector<pair<int, int>> sf(num_of_sf);
+  //sf[].first: cpu, sf[].second: ram
+  //camera
   sf[0] = make_pair(2, 4);
-  sf[1] = make_pair(2, 2);
+  //ffmpeg(pic)
+  sf[1] = make_pair(1, 2);
   sf[2] = make_pair(2, 2);
   sf[3] = make_pair(2, 2);
   sf[4] = make_pair(2, 2);
