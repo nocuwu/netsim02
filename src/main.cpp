@@ -167,7 +167,7 @@ int main()
 {
   //------service function の設定
   //vnfの種類数
-  int num_of_sf = 5;
+  int num_of_sf = 10;
   //sf[0].first: vnf0の要求cpuコア数
   //sf[0].second: vnf0の要求メモリ[GB]
   vector<pair<int, int>> sf(num_of_sf);
@@ -176,6 +176,11 @@ int main()
   sf[2] = make_pair(2, 2);
   sf[3] = make_pair(2, 2);
   sf[4] = make_pair(2, 2);
+  sf[5] = make_pair(2, 2);
+  sf[6] = make_pair(2, 2);
+  sf[7] = make_pair(2, 2);
+  sf[8] = make_pair(2, 2);
+  sf[9] = make_pair(2, 2);
 
   //------service (function) chain の設定
   //データサイズが変化するsc
