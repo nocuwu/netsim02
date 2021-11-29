@@ -92,7 +92,7 @@ int ffmpeg_fps(int size_data)
 int mosiac(int size_data)
 {
   int time;
-  time = size_data % 2;
+  time = size_data / 2;
   return time;
 }
 
@@ -168,8 +168,8 @@ int main()
   //------service function の設定
   //vnfの種類数
   int num_of_sf = 5;
-  //vnf[0].first: vnf0の要求cpuコア数
-  //vnf[0].second: vnf0の要求メモリ[GB]
+  //sf[0].first: vnf0の要求cpuコア数
+  //sf[0].second: vnf0の要求メモリ[GB]
   vector<pair<int, int>> sf(num_of_sf);
   sf[0] = make_pair(2, 2);
   sf[1] = make_pair(2, 2);
@@ -189,10 +189,14 @@ int main()
   }
   */
   //sc0の0番目のsfは0
+  //==camera()
   sc0.req_sf[0] = 0;
-  //sc0の1番目のsfは0
-  sc0.req_sf[1] = 0;
-  sc0.req_sf[2] = 0;
+  //sc0の1番目のsfは1
+  //==ffmpeg()
+  sc0.req_sf[1] = 1;
+  //sc0の1番目のsfは6
+  //==mosaic()
+  sc0.req_sf[2] = 6;
 
   sc0.req_bw = 100'000'000;
   sc0.req_cpu_sc = sf[0].first + sf[1].first + sf[2].first + sf[3].first;
@@ -248,6 +252,8 @@ int main()
   //sc発生
   int num_of_sc = 4;
   vector<int> req_sc(num_of_sc);
+  //req_sc[i] = j
+  //==i番目にscjが発生した
   req_sc[0] = 0;
   req_sc[1] = 0;
   req_sc[2] = 0;
@@ -265,6 +271,13 @@ int main()
     req_server[1] = make_pair(0, 0);
     req_server[2] = make_pair(0, 0);
     req_server[3] = make_pair(0, 0);
+
+    //サーバの処理時間
+    vector<int> server_time_passed(4);
+    for (int i = 0; i < 4; i++)
+    {
+      server_time_passed[i] = 0;
+    }
 
     //各リンク要求
     int num_of_node = 6;
@@ -288,6 +301,7 @@ int main()
           req_sf[j] = sc0.req_sf[j];
         }
       }
+      //要求scが1だったら
       else if (req_sc[sc / 6] == 1)
       {
         for (int j = 0; j < num_of_sf; j++)
@@ -346,6 +360,9 @@ int main()
           req_link[deploy_sf[index_deploy_sf]][OUT] += 100;
         }
 
+        //算出された処理時間を割当先のサーバに足していく
+        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 5);
+
         cout << deploy_sf[index_deploy_sf];
       }
       cout << " ";
@@ -380,6 +397,10 @@ int main()
     cout << req_link[2][OUT] << " ";
     cout << req_link[3][OUT] << " ";
 
+    for (int k = 0; k < 4; k++)
+    {
+      cout << server_time_passed[k] << " ";
+    }
     cout << endl;
   }
   //これダメなの？？
