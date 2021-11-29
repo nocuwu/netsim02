@@ -7,6 +7,7 @@
 #include <cmath>
 #include <iomanip> //fixed << setprecision(10)
 #include <functional>
+#include <random>
 
 using namespace std;
 
@@ -257,12 +258,21 @@ int main()
   //sc発生
   int num_of_sc = 4;
   vector<int> req_sc(num_of_sc);
+
+  std::mt19937 mt{std::random_device{}()};
+  std::uniform_int_distribution<int> dist(0, 1);
+
   //req_sc[i] = j
   //==i番目にscjが発生した
+  /*
   req_sc[0] = 0;
-  req_sc[1] = 1;
+  req_sc[1] = 0;
   req_sc[2] = 0;
-  req_sc[3] = 1;
+  req_sc[3] = 0;
+  */
+  for(int i = 0; i < num_of_sc; i++){
+    req_sc[i] = dist(mt);
+  }
 
   //best
   vector<pair<int, int>> best_pattern_accepted(NUM_SERVER);
