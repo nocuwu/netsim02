@@ -55,13 +55,13 @@ int bin2dec(int bin_1, int bin_0)
 //映像取得
 double camera()
 {
-  return 0;
+  return 2.0;
 }
 
 //FFmpeg（画像変換）
 double ffmpeg_pic(double size_data)
 {
-  return 0;
+  return 5.51;
 }
 
 //FFmpeg（エンコード）
@@ -218,9 +218,9 @@ int main()
   */
   //sc1の0番目のsfは0
   sc1.req_sf[0] = 0;
-  //sc1の1番目のsfは0
-  sc1.req_sf[1] = 0;
-  sc1.req_sf[2] = 0;
+  //sc1の1番目のsfは1
+  sc1.req_sf[1] = 1;
+  sc1.req_sf[2] = 7;
 
   sc1.req_bw = 100'000'000;
   sc1.req_cpu_sc = sf[0].first + sf[1].first + sf[2].first + sf[4].first;
@@ -243,7 +243,7 @@ int main()
 
   //****************************************************************************************
   //n = sc数*6
-  int n = 18;
+  int n = 12;
   int W = 10;
   vector<int> a(n);
 
@@ -260,9 +260,9 @@ int main()
   //req_sc[i] = j
   //==i番目にscjが発生した
   req_sc[0] = 0;
-  req_sc[1] = 0;
+  req_sc[1] = 1;
   req_sc[2] = 0;
-  req_sc[3] = 0;
+  req_sc[3] = 1;
 
   //best
   vector<pair<int, int>> best_pattern_accepted(NUM_SERVER);
@@ -375,7 +375,7 @@ int main()
         }
 
         //算出された処理時間を割当先のサーバに足していく
-        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 5.0);
+        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 6.912);
 
         cout << deploy_sf[index_deploy_sf];
       }
