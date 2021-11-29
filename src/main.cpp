@@ -171,7 +171,7 @@ int main()
   //sf[0].first: vnf0の要求cpuコア数
   //sf[0].second: vnf0の要求メモリ[GB]
   vector<pair<int, int>> sf(num_of_sf);
-  sf[0] = make_pair(2, 2);
+  sf[0] = make_pair(2, 4);
   sf[1] = make_pair(2, 2);
   sf[2] = make_pair(2, 2);
   sf[3] = make_pair(2, 2);
@@ -242,7 +242,7 @@ int main()
   server[3] = make_tuple(CPU_CORE, RAM, 0);
 
   //****************************************************************************************
-
+  //n = sc数*6
   int n = 12;
   int W = 10;
   vector<int> a(n);
@@ -263,6 +263,15 @@ int main()
   req_sc[1] = 0;
   req_sc[2] = 0;
   req_sc[3] = 0;
+
+  //best
+  vector<pair<int, int>> best_pattern_accepted(NUM_SERVER);
+  best_pattern_accepted[0] = make_pair(-1, -1);
+  best_pattern_accepted[1] = make_pair(-1, -1);
+  best_pattern_accepted[2] = make_pair(-1, -1);
+  best_pattern_accepted[3] = make_pair(-1, -1);
+
+  int best_bottleneck_server_time_passed = 9999;
 
   //***************組み合わせループ
   for (int bit = 0; bit < (1 << n); ++bit)
@@ -402,12 +411,18 @@ int main()
     cout << req_link[2][OUT] << " ";
     cout << req_link[3][OUT] << " ";
 
+    int bottleneck_server_time_passed = -1;
     for (int k = 0; k < 4; k++)
     {
+      bottleneck_server_time_passed = max(bottleneck_server_time_passed, server_time_passed[k]);
       cout << server_time_passed[k] << " ";
     }
     cout << endl;
+
+    best_bottleneck_server_time_passed = min(best_bottleneck_server_time_passed, bottleneck_server_time_passed);
   }
+
+  cout << best_bottleneck_server_time_passed << endl;
   //これダメなの？？
   /*
   for(int i = 0; i < NUM_SERVER; i++){
