@@ -20,8 +20,8 @@ typedef vector<int> vi;
 #define CPU_CORE 12
 // サーバ1つ当たりのメモリ(RAM)[GB]
 #define RAM 24
-// スループット（サーバ間）[bps]
-#define tp_io_server 1'000'000'000
+// スループット（サーバ間）[Mbps]
+#define TP_LINK_SERVER 1000
 // サーバ台数
 #define NUM_SERVER 4
 
@@ -238,16 +238,36 @@ int main()
   topology.t_ram = RAM * NUM_SERVER;
 
   //各サーバ容量
-  vector<tuple<int, int, int>> server(NUM_SERVER);
+  vector<pair<int, int>> server(NUM_SERVER);
 
-  server[0] = make_tuple(CPU_CORE, RAM, 0);
-  server[1] = make_tuple(CPU_CORE, RAM, 0);
-  server[2] = make_tuple(CPU_CORE, RAM, 0);
-  server[3] = make_tuple(CPU_CORE, RAM, 0);
+  server[0] = make_pair(CPU_CORE, RAM);
+  server[1] = make_pair(CPU_CORE, RAM);
+  server[2] = make_pair(CPU_CORE, RAM);
+  server[3] = make_pair(CPU_CORE, RAM);
+
+  //各リンク要求
+  int num_of_node = 6;
+  vector<vector<int>> link;
+  link.assign(num_of_node, vector<int>(num_of_node, 0));
+
+  link[IN][0] = TP_LINK_SERVER;
+  link[IN][1] = TP_LINK_SERVER;
+  link[IN][2] = TP_LINK_SERVER;
+  link[IN][3] = TP_LINK_SERVER;
+  link[0][1] = TP_LINK_SERVER;
+  link[0][2] = TP_LINK_SERVER;
+  link[0][3] = TP_LINK_SERVER;
+  link[1][2] = TP_LINK_SERVER;
+  link[1][3] = TP_LINK_SERVER;
+  link[2][3] = TP_LINK_SERVER;
+  link[0][OUT] = TP_LINK_SERVER;
+  link[1][OUT] = TP_LINK_SERVER;
+  link[2][OUT] = TP_LINK_SERVER;
+  link[3][OUT] = TP_LINK_SERVER;
 
   //****************************************************************************************
   //n = sc数*6
-  int n = 12;
+  int n = 6;
   int W = 10;
   vector<int> a(n);
 
@@ -273,8 +293,10 @@ int main()
   req_sc[2] = 0;
   req_sc[3] = 0;
   */
-  for(int i = 0; i < num_of_sc; i++){
-    req_sc[i] = dist(mt);
+  for (int i = 0; i < num_of_sc; i++)
+  {
+    //req_sc[i] = dist(mt);
+    req_sc[i] = 1;
   }
 
   //best
@@ -291,6 +313,7 @@ int main()
   {
     cout << bit << " ";
     int S = 0;
+    int flag = 1;
 
     //各サーバ要求
     vector<pair<int, int>> req_server(NUM_SERVER);
@@ -307,7 +330,6 @@ int main()
     }
 
     //各リンク要求
-    int num_of_node = 6;
     vector<vector<int>> req_link;
     req_link.assign(num_of_node, vector<int>(num_of_node, 0));
 
@@ -394,21 +416,39 @@ int main()
       }
       cout << " ";
     }
+
+    /*
     if (S == W)
     {
       ans++;
       cout << "(hit)";
     }
+    */
 
+    //要求CPUコア数を出力
     for (int j = 0; j < NUM_SERVER; j++)
     {
       cout << req_server[j].first << " ";
     }
+    //要求メモリ容量を出力
     for (int j = 0; j < NUM_SERVER; j++)
     {
       cout << req_server[j].second << " ";
     }
 
+    for (int i = 0; i < NUM_SERVER; i++)
+    {
+      if (req_server[i].first > server[i].first)
+      {
+        flag = 0;
+      }
+      if (req_server[i].second > server[i].second)
+      {
+        flag = 0;
+      }
+    }
+
+    //必要帯域を出力
     cout << req_link[IN][0] << " ";
     cout << req_link[IN][1] << " ";
     cout << req_link[IN][2] << " ";
@@ -424,15 +464,77 @@ int main()
     cout << req_link[2][OUT] << " ";
     cout << req_link[3][OUT] << " ";
 
+    if (req_link[IN][0] > link[IN][0])
+    {
+      flag = 0;
+    }
+    if (req_link[IN][1] > link[IN][1])
+    {
+      flag = 0;
+    }
+    if (req_link[IN][2] > link[IN][2])
+    {
+      flag = 0;
+    }
+    if (req_link[IN][3] > link[IN][3])
+    {
+      flag = 0;
+    }
+    if (req_link[0][1] > link[0][1])
+    {
+      flag = 0;
+    }
+    if (req_link[0][2] > link[0][2])
+    {
+      flag = 0;
+    }
+    if (req_link[0][3] > link[0][3])
+    {
+      flag = 0;
+    }
+    if (req_link[1][2] > link[1][2])
+    {
+      flag = 0;
+    }
+    if (req_link[1][3] > link[1][3])
+    {
+      flag = 0;
+    }
+    if (req_link[2][3] > link[2][3])
+    {
+      flag = 0;
+    }
+    if (req_link[0][OUT] > link[0][OUT])
+    {
+      flag = 0;
+    }
+    if (req_link[1][OUT] > link[1][OUT])
+    {
+      flag = 0;
+    }
+    if (req_link[2][OUT] > link[2][OUT])
+    {
+      flag = 0;
+    }
+    if (req_link[3][OUT] > link[3][OUT])
+    {
+      flag = 0;
+    }
+
     double bottleneck_server_time_passed = -1.0;
     for (int k = 0; k < 4; k++)
     {
+      //一番遅いサーバを見つける
       bottleneck_server_time_passed = max(bottleneck_server_time_passed, server_time_passed[k]);
       cout << server_time_passed[k] << " ";
     }
     cout << endl;
 
-    best_bottleneck_server_time_passed = min(best_bottleneck_server_time_passed, bottleneck_server_time_passed);
+    //一番はやい組み合わせの合計処理時間
+    if (flag == 1)
+    {
+      best_bottleneck_server_time_passed = min(best_bottleneck_server_time_passed, bottleneck_server_time_passed);
+    }
   }
 
   cout << best_bottleneck_server_time_passed << endl;
