@@ -25,6 +25,8 @@ typedef vector<int> vi;
 // サーバ台数
 #define NUM_SERVER 4
 
+#define SIZE_DATA 6.912
+
 #define IN 4
 #define OUT 5
 
@@ -47,6 +49,12 @@ struct sc
   int req_ram_sc;
 };
 
+struct proc
+{
+  double d;
+  double t;
+} typedef proc;
+
 //2進数をint型10進数に変換して返す
 int bin2dec(int bin_1, int bin_0)
 {
@@ -62,7 +70,10 @@ double camera()
 //FFmpeg（画像変換）
 double ffmpeg_pic(double size_data)
 {
-  return 5.51;
+  proc ffmpeg_pic;
+  ffmpeg_pic.t = 5.5;
+  ffmpeg_pic.d = size_data / 2.0;
+  return 5.5;
 }
 
 //FFmpeg（エンコード）
@@ -267,7 +278,7 @@ int main()
 
   //****************************************************************************************
   //n = sc数*6
-  int n = 6;
+  int n = 12;
   int W = 10;
   vector<int> a(n);
 
@@ -295,8 +306,8 @@ int main()
   */
   for (int i = 0; i < num_of_sc; i++)
   {
-    //req_sc[i] = dist(mt);
-    req_sc[i] = 1;
+    req_sc[i] = dist(mt);
+    //req_sc[i] = 1;
   }
 
   //best
@@ -308,7 +319,7 @@ int main()
 
   double best_bottleneck_server_time_passed = 9999;
 
-  //***************組み合わせループ
+  //***************組み合わせループ***********************************************************
   for (int bit = 0; bit < (1 << n); ++bit)
   {
     cout << bit << " ";
@@ -333,6 +344,7 @@ int main()
     vector<vector<int>> req_link;
     req_link.assign(num_of_node, vector<int>(num_of_node, 0));
 
+    double size_data = SIZE_DATA;
     //***********************scループ
     for (int sc = 0; sc < n; sc = sc + 6)
     {
@@ -403,14 +415,18 @@ int main()
 
         if (index_deploy_sf == 2)
         {
-          req_link[IN][deploy_sf[index_deploy_sf - 2]] += 100;
-          req_link[deploy_sf[index_deploy_sf - 2]][deploy_sf[index_deploy_sf - 1]] += 100;
-          req_link[deploy_sf[index_deploy_sf - 1]][deploy_sf[index_deploy_sf]] += 100;
-          req_link[deploy_sf[index_deploy_sf]][OUT] += 100;
+          req_link[IN][deploy_sf[index_deploy_sf - 2]] += 250;
+          req_link[deploy_sf[index_deploy_sf - 2]][deploy_sf[index_deploy_sf - 1]] += 250;
+          req_link[deploy_sf[index_deploy_sf - 1]][deploy_sf[index_deploy_sf]] += 250;
+          req_link[deploy_sf[index_deploy_sf]][OUT] += 250;
         }
 
         //算出された処理時間を割当先のサーバに足していく
-        server_time_passed[dec] += processing(req_sf[index_deploy_sf], 6.912);
+        server_time_passed[dec] += processing(req_sf[index_deploy_sf], size_data);
+        if (req_sf[index_deploy_sf] == 1)
+        {
+          size_data *= 1.0;
+        }
 
         cout << deploy_sf[index_deploy_sf];
       }
