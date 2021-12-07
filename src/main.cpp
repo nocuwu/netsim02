@@ -17,9 +17,9 @@ typedef long long ll;
 typedef vector<int> vi;
 
 // サーバ1つ当たりのCPUコア数
-#define CPU_CORE 4
+#define CPU_CORE 8
 // サーバ1つ当たりのメモリ(RAM)[GB]
-#define RAM 8
+#define RAM 16
 // スループット（サーバ間）[Mbps]
 #define TP_LINK_SERVER 1000
 // サーバ台数
