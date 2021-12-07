@@ -17,9 +17,9 @@ typedef long long ll;
 typedef vector<int> vi;
 
 // サーバ1つ当たりのCPUコア数
-#define CPU_CORE 12
+#define CPU_CORE 4
 // サーバ1つ当たりのメモリ(RAM)[GB]
-#define RAM 24
+#define RAM 8
 // スループット（サーバ間）[Mbps]
 #define TP_LINK_SERVER 1000
 // サーバ台数
@@ -352,6 +352,8 @@ int main()
       vector<int> deploy_sf(num_of_sf);
       //今見てるscの要求sfリスト
       vector<int> req_sf(num_of_sf);
+      //mati
+      double time_standby = 0.0;
 
       //要求scが0だったら
       if (req_sc[sc / 6] == 0)
@@ -423,6 +425,22 @@ int main()
 
         //算出された処理時間を割当先のサーバに足していく
         server_time_passed[dec] += processing(req_sf[index_deploy_sf], size_data);
+
+        //各scの待ち時間を加算
+        if (index_deploy_sf == 0)
+        {
+          time_standby += processing(req_sf[index_deploy_sf], size_data);
+        }
+        else if (index_deploy_sf == 1)
+        {
+          server_time_passed[dec] += time_standby;
+          time_standby += processing(req_sf[index_deploy_sf], size_data);
+        }
+        else if (index_deploy_sf == 2)
+        {
+          server_time_passed[dec] += time_standby;
+        }
+
         if (req_sf[index_deploy_sf] == 1)
         {
           size_data *= 1.0;
