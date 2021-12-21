@@ -350,10 +350,25 @@ int main()
     {
       //sfの配置先
       vector<int> deploy_sf(num_of_sf);
+
       //今見てるscの要求sfリスト
       vector<int> req_sf(num_of_sf);
-      //mati
-      double time_standby = 0.0;
+
+      vector<double> server_time_passed_sc(4);
+      for (int i = 0; i < 4; i++)
+      {
+        server_time_passed_sc[i] = 0;
+      }
+
+      //サーバの待機時間
+      //ex)2番目のsfを処理するサーバが1番目を待っている時間
+      double time_standby_all = 0;
+
+      double time_standby[3];
+      time_standby[0] = 0.0;
+      time_standby[1] = 0.0;
+      time_standby[2] = 0.0;
+      time_standby[3] = 0.0;
 
       //要求scが0だったら
       if (req_sc[sc / 6] == 0)
@@ -423,23 +438,23 @@ int main()
           req_link[deploy_sf[index_deploy_sf]][OUT] += 250;
         }
 
-        //算出された処理時間を割当先のサーバに足していく
-        server_time_passed[dec] += processing(req_sf[index_deploy_sf], size_data);
-
         //各scの待ち時間を加算
+        //0~1番目の処理時間を2番目を処理するサーバに加える
         if (index_deploy_sf == 0)
         {
-          time_standby += processing(req_sf[index_deploy_sf], size_data);
+          time_standby_all += processing(req_sf[index_deploy_sf], size_data);
         }
         else if (index_deploy_sf == 1)
         {
-          server_time_passed[dec] += time_standby;
-          time_standby += processing(req_sf[index_deploy_sf], size_data);
+          server_time_passed_sc[dec] += (time_standby_all - server_time_passed_sc[dec]);
+          time_standby_all += processing(req_sf[index_deploy_sf], size_data);
         }
         else if (index_deploy_sf == 2)
         {
-          server_time_passed[dec] += time_standby;
+          server_time_passed_sc[dec] += (time_standby_all - server_time_passed_sc[dec]);
         }
+        //算出された処理時間を割当先のサーバに足していく
+        server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], SIZE_DATA);
 
         if (req_sf[index_deploy_sf] == 1)
         {
@@ -449,6 +464,12 @@ int main()
         cout << deploy_sf[index_deploy_sf];
       }
       cout << " ";
+
+      //今回のscでサーバに割り当てられた処理時間を全体のに加算
+      for (int ii = 0; ii < 4; ii++)
+      {
+        server_time_passed[ii] += server_time_passed_sc[ii];
+      }
     }
 
     /*
