@@ -307,7 +307,7 @@ int main()
   for (int i = 0; i < num_of_sc; i++)
   {
     req_sc[i] = dist(mt);
-    //req_sc[i] = 1;
+    //req_sc[i] = 0;
   }
 
   //best
@@ -388,7 +388,7 @@ int main()
         }
       }
       //*************************sfループ
-      for (int i = sc * 6; i < (sc * 6) + 6; i = i + 2)
+      for (int i = sc + 1; i < sc + 6 + 1; i += 2)
       {
 
         int bin_0, bin_1;
@@ -397,22 +397,22 @@ int main()
         //cout << (bit & (1 << i));
         if (bit & (1 << i))
         {
-          if (bit & (1 << i + 1))
+          if (bit & (1 << i - 1))
           {
             dec = bin2dec(1, 1);
           }
           else
           {
-            dec = bin2dec(0, 1);
+            dec = bin2dec(1, 0);
           }
           //cout << 1;
           //S += a[i];
         }
         else
         {
-          if (bit & (1 << i + 1))
+          if (bit & (1 << i - 1))
           {
-            dec = bin2dec(1, 0);
+            dec = bin2dec(0, 1);
           }
           else
           {
