@@ -178,11 +178,11 @@ double processing(int sf, double size_data)
 int main()
 {
   //------service function の設定
-  //vnfの種類数
-  int num_of_sf = 10;
+  //sfの種類数
+  int types_sf = 10;
   //sf[0].first: vnf0の要求cpuコア数
   //sf[0].second: vnf0の要求メモリ[GB]
-  vector<pair<int, int>> sf(num_of_sf);
+  vector<pair<int, int>> sf(types_sf);
   //sf[].first: cpu, sf[].second: ram
   //camera
   sf[0] = make_pair(2, 4);
@@ -257,6 +257,7 @@ int main()
   server[3] = make_pair(CPU_CORE, RAM);
 
   //各リンク要求
+  //ノード（サーバ+IN+OUT）
   int num_of_node = 6;
   vector<vector<int>> link;
   link.assign(num_of_node, vector<int>(num_of_node, 0));
@@ -290,13 +291,14 @@ int main()
   int ans = 0;
 
   //sc発生
-  int num_of_sc = 4;
-  vector<int> req_sc(num_of_sc);
+  //1つのscに含まれるsf数
+  int size_of_sc = 4;
+  vector<int> req_sc(size_of_sc);
 
   std::mt19937 mt{std::random_device{}()};
   std::uniform_int_distribution<int> dist(0, 1);
 
-  //req_sc[i] = j
+  //req_sc[i] = js
   //==i番目にscjが発生した
   /*
   req_sc[0] = 0;
@@ -304,7 +306,7 @@ int main()
   req_sc[2] = 0;
   req_sc[3] = 0;
   */
-  for (int i = 0; i < num_of_sc; i++)
+  for (int i = 0; i < size_of_sc; i++)
   {
     req_sc[i] = dist(mt);
     //req_sc[i] = 0;
@@ -349,10 +351,10 @@ int main()
     for (int sc = 0; sc < n; sc = sc + 6)
     {
       //sfの配置先
-      vector<int> deploy_sf(num_of_sf);
+      vector<int> deploy_sf(types_sf);
 
       //今見てるscの要求sfリスト
-      vector<int> req_sf(num_of_sf);
+      vector<int> req_sf(types_sf);
 
       vector<double> server_time_passed_sc(4);
       for (int i = 0; i < 4; i++)
@@ -374,7 +376,7 @@ int main()
       if (req_sc[sc / 6] == 0)
       {
         //sc0の要求sf番号の配列をコピー
-        for (int j = 0; j < num_of_sf; j++)
+        for (int j = 0; j < types_sf; j++)
         {
           req_sf[j] = sc0.req_sf[j];
         }
@@ -382,7 +384,7 @@ int main()
       //要求scが1だったら
       else if (req_sc[sc / 6] == 1)
       {
-        for (int j = 0; j < num_of_sf; j++)
+        for (int j = 0; j < types_sf; j++)
         {
           req_sf[j] = sc1.req_sf[j];
         }
@@ -454,7 +456,7 @@ int main()
           server_time_passed_sc[dec] += (time_standby_all - server_time_passed_sc[dec]);
         }
         //算出された処理時間を割当先のサーバに足していく
-        server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], SIZE_DATA);
+        server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], size_data);
 
         if (req_sf[index_deploy_sf] == 1)
         {
