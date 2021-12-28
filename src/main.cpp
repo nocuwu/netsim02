@@ -291,9 +291,9 @@ int main()
   int ans = 0;
 
   //sc発生
-  //1つのscに含まれるsf数
-  int size_of_sc = 4;
-  vector<int> req_sc(size_of_sc);
+  //発生させるscの数
+  int num_of_sc = 4;
+  vector<int> req_sc(num_of_sc);
 
   std::mt19937 mt{std::random_device{}()};
   std::uniform_int_distribution<int> dist(0, 1);
@@ -306,7 +306,7 @@ int main()
   req_sc[2] = 0;
   req_sc[3] = 0;
   */
-  for (int i = 0; i < size_of_sc; i++)
+  for (int i = 0; i < num_of_sc; i++)
   {
     req_sc[i] = dist(mt);
     //req_sc[i] = 0;
