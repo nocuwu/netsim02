@@ -8,6 +8,7 @@
 #include <iomanip> //fixed << setprecision(10)
 #include <functional>
 #include <random>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ typedef vector<int> vi;
 // サーバ台数
 #define NUM_SERVER 4
 
-#define SIZE_DATA 6.912
+#define SIZE_DATA 10
 
 #define IN 4
 #define OUT 5
@@ -61,10 +62,22 @@ int bin2dec(int bin_1, int bin_0)
   return (bin_1 * 2) + bin_0;
 }
 
+//シャッフル
+void shuffle(int ary[], int size)
+{
+  for (int i = 0; i < size; i++)
+  {
+    int j = rand() % size;
+    int t = ary[i];
+    ary[i] = ary[j];
+    ary[j] = t;
+  }
+}
+
 //映像取得
 double camera()
 {
-  return 2.0;
+  return 4.0;
 }
 
 //FFmpeg（画像変換）
@@ -127,7 +140,10 @@ double detect(double size_data)
 //YOLO v2
 int yolo(double size_data)
 {
-  return 2.0;
+  //==detect()
+  double time;
+  time = size_data / 0.92;
+  return time;
 }
 
 //MPEG-DASH
@@ -178,6 +194,55 @@ double processing(int sf, double size_data)
   else if (sf == 9)
   {
     return dash(size_data);
+  }
+
+  return 0;
+}
+
+//データサイズ変化を計算
+double compression(int sf, double size_data_raw)
+{
+  if (sf == 0)
+  {
+    return size_data_raw;
+  }
+  //video -> pic
+  else if (sf == 1)
+  {
+    return size_data_raw * 0.75;
+  }
+  //jikannshitei
+  else if (sf == 2)
+  {
+    return size_data_raw * 0.51;
+  }
+  else if (sf == 3)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 4)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 5)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 6)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 7)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 8)
+  {
+    return size_data_raw;
+  }
+  else if (sf == 9)
+  {
+    return size_data_raw;
   }
 
   return 0;
@@ -264,6 +329,7 @@ int main()
     sc0.req_sf[i] = false;
   }
   */
+  /*
   //camera
   sc2.req_sf[0] = 0;
   //cut
@@ -276,6 +342,69 @@ int main()
   sc2.req_sf[4] = 2;
   //yolo
   sc2.req_sf[5] = 8;
+  */
+  //要求scのsf数
+  int num_of_sf = 6;
+
+  //camera
+  sc2.req_sf[0] = 0;
+
+  int flow_right = 1;
+  //ランダムな順序で要求
+  if (flow_right == 0)
+  {
+    vector<int> list(num_of_sf - 1);
+    mt19937_64 get_rand_mt;
+
+    list[0] = 3;
+    list[1] = 4;
+    list[2] = 5;
+    list[3] = 2;
+    list[4] = 8;
+    
+    shuffle(list.begin(), list.end(), get_rand_mt);
+    for (int i = 0; i < 5; i++)
+    {
+      sc2.req_sf[i + 1] = list[i];
+    }
+  }
+  //処理データが最小になる順序で要求
+  else if (flow_right == 1)
+  {
+    vector<pair<int, int>> queue(num_of_sf - 1);
+    queue[0] = make_pair(compression(3, 10.0), 3);
+    queue[1] = make_pair(compression(3, 10.0), 4);
+    queue[2] = make_pair(compression(3, 10.0), 5);
+    queue[3] = make_pair(compression(3, 10.0), 2);
+    queue[4] = make_pair(compression(3, 10.0), 8);
+
+    sort(queue.begin(), queue.end());
+
+    for (int i = 0; i < 5; i++)
+    {
+      sc2.req_sf[i + 1] = queue[i].second;
+    }
+
+    /*
+    //cut
+    sc2.req_sf[1] = 3;
+    //reso
+    sc2.req_sf[2] = 4;
+    //fps
+    sc2.req_sf[3] = 5;
+    //encode
+    sc2.req_sf[4] = 2;
+    //yolo
+    sc2.req_sf[5] = 8;
+    */
+  }
+
+  /*
+  for (int i = 0; i < 10; i++)
+  {
+    printf("%d,", list[i]);
+  }
+  */
 
   sc2.req_bw = 100'000'000;
   sc2.req_cpu_sc = sf[0].first + sf[1].first + sf[2].first + sf[4].first;
@@ -334,7 +463,6 @@ int main()
   //sc発生
   //発生させるscの数
   int num_of_sc = 2;
-  int num_of_sf = 6;
   vector<int> req_sc(num_of_sc);
 
   std::mt19937 mt{std::random_device{}()};
@@ -537,9 +665,9 @@ int main()
         //算出された処理時間を割当先のサーバに足していく
         server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], size_data);
 
-        if (req_sf[index_deploy_sf] == 1)
+        if (req_sf[index_deploy_sf] == 3)
         {
-          size_data *= 1.0;
+          size_data *= 0.5;
         }
 
         cout << deploy_sf[index_deploy_sf];
