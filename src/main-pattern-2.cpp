@@ -79,25 +79,33 @@ double ffmpeg_pic(double size_data)
 //FFmpeg（エンコード）
 double ffmpeg_encode(double size_data)
 {
-  return 2.0;
+  double time;
+  time = size_data / 48.4;
+  return time;
 }
 
 //FFmpeg（指定範囲切り出し）
 double ffmpeg_cut(double size_data)
 {
-  return 2.0;
+  double time;
+  time = size_data / 43.7;
+  return time;
 }
 
 //FFmpeg（解像度変更）
 double ffmpeg_reso(double size_data)
 {
-  return 2.0;
+  double time;
+  time = size_data / 74.3;
+  return time;
 }
 
 //FFmpeg（FPS変更）
 double ffmpeg_fps(double size_data)
 {
-  return 2.0;
+  double time;
+  time = size_data / 44.8;
+  return time;
 }
 
 //イメージモザイキング
