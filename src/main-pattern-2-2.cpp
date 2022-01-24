@@ -84,8 +84,8 @@ void shuffle(int ary[], int size)
 //映像取得
 double camera()
 {
-  //return 4.0;
-  return 1.0;
+  return 4.0;
+  //return 1.0;
 }
 
 //FFmpeg（画像変換）
@@ -102,8 +102,8 @@ double ffmpeg_encode(double size_data)
 {
   double time;
   time = size_data / 48.4;
-  //return time;
-  return 1.0;
+  return time;
+  //return 1.0;
 }
 
 //FFmpeg（指定範囲切り出し）
@@ -111,8 +111,8 @@ double ffmpeg_cut(double size_data)
 {
   double time;
   time = size_data / 43.7;
-  //return time;
-  return 1.0;
+  return time;
+  //return 1.0;
 }
 
 //FFmpeg（解像度変更）
@@ -120,8 +120,8 @@ double ffmpeg_reso(double size_data)
 {
   double time;
   time = size_data / 74.3;
-  //return time;
-  return 1.0;
+  return time;
+  //return 1.0;
 }
 
 //FFmpeg（FPS変更）
@@ -129,8 +129,8 @@ double ffmpeg_fps(double size_data)
 {
   double time;
   time = size_data / 44.8;
-  //return time;
-  return 1.0;
+  return time;
+  //eturn 1.0;
 }
 
 //イメージモザイキング
@@ -155,8 +155,8 @@ int yolo(double size_data)
   //==detect()
   double time;
   time = size_data / 0.92;
-  //return time;
-  return 1.0;
+  return time;
+  //return 1.0;
 }
 
 //MPEG-DASH
@@ -461,7 +461,7 @@ int main()
 
   //****************************************************************************************
   //n = sc数*12
-  int n = 18;
+  int n = 12;
   int W = 10;
 
   vector<int> a(n);
@@ -592,6 +592,7 @@ int main()
       }
 
       int dec_old = -1;
+
       //*************************sfループ
       //for (int i = sc + 1; i < sc + 12 + 1; i += 2)
       for (int i = sc + 1; i < sc + 6 + 1; i++)
