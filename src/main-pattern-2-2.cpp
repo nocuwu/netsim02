@@ -461,7 +461,7 @@ int main()
 
   //****************************************************************************************
   //n = sc数*12
-  int n = 6;
+  int n = 18;
   int W = 10;
 
   vector<int> a(n);
@@ -587,6 +587,11 @@ int main()
           req_sf[j] = sc2.req_sf[j];
         }
       }
+      else{
+        cout << (req_sc[sc / 6]) << endl;
+      }
+
+      int dec_old = -1;
       //*************************sfループ
       //for (int i = sc + 1; i < sc + 12 + 1; i += 2)
       for (int i = sc + 1; i < sc + 6 + 1; i++)
@@ -663,6 +668,7 @@ int main()
 
         //各scの待ち時間を加算
         //0~1番目の処理時間を2番目を処理するサーバに加える
+        /*
         if (index_deploy_sf == 0)
         {
           time_standby_all += processing(req_sf[index_deploy_sf], size_data);
@@ -691,8 +697,14 @@ int main()
         {
           server_time_passed_sc[dec] += (time_standby_all - server_time_passed_sc[dec]);
         }
+        */
 
         //算出された処理時間を割当先のサーバに足していく
+        //server_time_passed_sc[dec] += max(server_time_passed_sc[0], server_time_passed_sc[1]);
+        if(dec_old != dec){
+          server_time_passed_sc[dec] += max(server_time_passed_sc[0], server_time_passed_sc[1]);
+        }
+        dec_old = dec;
         server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], size_data);
 
         if (req_sf[index_deploy_sf] == 3)
