@@ -33,10 +33,69 @@ typedef vector<int> vi;
 //#define NUM_SERVER 4
 #define NUM_SERVER 4
 
-#define SIZE_DATA 10
+#define SIZE_DATA 10.7
 
 #define IN 4
 #define OUT 5
+
+
+/*
+int bin2dec(int bin_1, int bin_0){
+    return (bin_1 * bin_1) + bin_0;
+}
+
+int main()
+{
+    int n = 6;
+    int W = 10;
+    vector<int> a(n);
+
+    for(int i = 0; i < n; i++){
+        a[i] = 1;
+    }
+
+    int ans = 0;
+
+    //組み合わせ数ループ
+    for (int bit = 0; bit < (1 << n); ++bit)
+    {
+        int S = 0;
+        for (int i = 0; i < n; i = i + 2)
+        {
+            int bin_0, bin_1;
+            //整数bitを2進法表記したときの、下からi桁目が1か判定
+            //cout << (bit & (1 << i));
+            if (bit & (1 << i))
+            {
+                if (bit & (1 << i+1)){
+                    cout << 3;
+                }
+                else{
+                    cout << 1;
+                }
+                //cout << 1;
+                //S += a[i];
+            }
+            else{
+                if (bit & (1 << i+1)){
+                    cout << 2;
+                }
+                else{
+                    cout << 0;
+                }
+                //cout << 0;
+            }
+            
+        }
+        if (S == W)
+        {
+            ans++;
+            cout << "(hit)";
+        }
+        cout << ":"<< bit << endl;
+    }
+}
+*/
 
 //トポロジの残余リソース
 struct topology
@@ -130,7 +189,7 @@ double ffmpeg_fps(double size_data)
   double time;
   time = size_data / 44.8;
   return time;
-  //eturn 1.0;
+  //return 1.0;
 }
 
 //イメージモザイキング
@@ -150,7 +209,7 @@ double detect(double size_data)
 }
 
 //YOLO v2
-int yolo(double size_data)
+double yolo(double size_data)
 {
   //==detect()
   double time;
@@ -372,8 +431,8 @@ int main()
     list[0] = 3;
     list[1] = 4;
     list[2] = 5;
-    list[3] = 2;
-    list[4] = 8;
+    list[3] = 8;
+    list[4] = 2;
 
     shuffle(list.begin(), list.end(), get_rand_mt);
     for (int i = 0; i < 5; i++)
@@ -411,7 +470,14 @@ int main()
     sc2.req_sf[5] = 8;
     */
   }
-
+  /*
+  sc2.req_sf[0] = 0;
+  sc2.req_sf[1] = 2;
+  sc2.req_sf[2] = 3;
+  sc2.req_sf[3] = 4;
+  sc2.req_sf[4] = 5;
+  sc2.req_sf[5] = 8;
+  */
   /*
   for (int i = 0; i < 10; i++)
   {
@@ -461,7 +527,9 @@ int main()
 
   //****************************************************************************************
   //n = sc数*12
-  int n = 12;
+  //n = 12 でsf6 x 2
+  //n = 18 でsf6 x 3
+  int n = 18;
   int W = 10;
 
   vector<int> a(n);
@@ -519,8 +587,20 @@ int main()
     req_server[3] = make_pair(0, 0);
 
     //サーバの処理時間
+    /*
     vector<double> server_time_passed(4);
     for (int i = 0; i < 4; i++)
+    {
+      server_time_passed[i] = 0;
+    }
+    */
+    vector<double> server_time_passed(2);
+    for (int i = 0; i < 2; i++)
+    {
+      server_time_passed[i] = 0;
+    }
+    vector<double> server_time_passed_back(2);
+    for (int i = 0; i < 2; i++)
     {
       server_time_passed[i] = 0;
     }
@@ -541,11 +621,22 @@ int main()
 
       //今見てるscの要求sfリスト
       vector<int> req_sf(types_sf);
-
+      /*
       vector<double> server_time_passed_sc(4);
       for (int i = 0; i < 4; i++)
       {
         server_time_passed_sc[i] = 0;
+      }
+      */
+      vector<double> server_time_passed_sc(2);
+      for (int i = 0; i < 2; i++)
+      {
+        server_time_passed_sc[i] = 0;
+      }
+      vector<double> server_time_passed_sc_back(2);
+      for (int i = 0; i < 2; i++)
+      {
+        server_time_passed_sc_back[i] = 0;
       }
 
       //サーバの待機時間
@@ -587,15 +678,16 @@ int main()
           req_sf[j] = sc2.req_sf[j];
         }
       }
-      else{
-        cout << (req_sc[sc / 6]) << endl;
+      else
+      {
+        //cout << (req_sc[sc / 6]) << endl;
       }
 
       int dec_old = -1;
 
       //*************************sfループ
       //for (int i = sc + 1; i < sc + 12 + 1; i += 2)
-      for (int i = sc + 1; i < sc + 6 + 1; i++)
+      for (int i = sc; i < sc + 6; i++)
       {
 
         int bin_0, bin_1;
@@ -702,26 +794,61 @@ int main()
 
         //算出された処理時間を割当先のサーバに足していく
         //server_time_passed_sc[dec] += max(server_time_passed_sc[0], server_time_passed_sc[1]);
-        if(dec_old != dec){
+        /*
+        if (dec_old != dec)
+        {
           server_time_passed_sc[dec] += max(server_time_passed_sc[0], server_time_passed_sc[1]);
         }
         dec_old = dec;
         server_time_passed_sc[dec] += processing(req_sf[index_deploy_sf], size_data);
-
-        if (req_sf[index_deploy_sf] == 3)
+        */
+        if (dec == 0)
         {
-          //size_data *= 0.5;
-          size_data *= 1.0;
+          server_time_passed_sc[0] += server_time_passed_sc_back[0] + processing(req_sf[index_deploy_sf], size_data);
+          server_time_passed_sc_back[1] += processing(req_sf[index_deploy_sf], size_data);
+        }
+        if (dec == 1)
+        {
+          server_time_passed_sc[1] += server_time_passed_sc_back[1] + processing(req_sf[index_deploy_sf], size_data);
+          server_time_passed_sc_back[0] += processing(req_sf[index_deploy_sf], size_data);
+        }
+
+        if (req_sf[index_deploy_sf] == 2)
+        {
+          size_data *= 0.38;
+          //size_data *= 1.0;
+        }
+        else if (req_sf[index_deploy_sf] == 3)
+        {
+          size_data *= 0.51;
+          //size_data *= 1.0;
+        }
+        else if (req_sf[index_deploy_sf] == 4)
+        {
+          size_data *= 0.5;
+          //size_data *= 1.0;
+        }
+        else if (req_sf[index_deploy_sf] == 5)
+        {
+          size_data *= 0.89;
+          //size_data *= 1.0;
         }
 
         cout << deploy_sf[index_deploy_sf];
+        /*
+        if(i == 0){
+          cout << "a";
+        }
+        */
       }
       cout << " ";
 
       //今回のscでサーバに割り当てられた処理時間を全体のに加算
-      for (int ii = 0; ii < 4; ii++)
+      for (int ii = 0; ii < 2; ii++)
       {
         server_time_passed[ii] += server_time_passed_sc[ii];
+        server_time_passed[ii] -= min(server_time_passed_back[ii], server_time_passed_sc_back[ii]);
+        server_time_passed_back[ii] = fabs(server_time_passed_back[ii] - server_time_passed_sc_back[ii]);
       }
     }
 
@@ -830,7 +957,7 @@ int main()
     }
 
     double bottleneck_server_time_passed = -1.0;
-    for (int k = 0; k < 4; k++)
+    for (int k = 0; k < 2; k++)
     {
       //一番遅いサーバを見つける
       bottleneck_server_time_passed = max(bottleneck_server_time_passed, server_time_passed[k]);
